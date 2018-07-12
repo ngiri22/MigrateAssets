@@ -36,11 +36,11 @@ public class XMLElements {
 		AssetMetadata assetMetadata = new AssetMetadata();
 		
 		assetMetadata.setId(root.element(MigrationConstants.XML_ID_ELEMENT).getStringValue());
-		assetMetadata.setId(root.element(MigrationConstants.XML_VERSION_ELEMENT).getStringValue());
-		assetMetadata.setId(root.element(MigrationConstants.XML_ISMASTER_ELEMENT).getStringValue());
-		assetMetadata.setId(root.element(MigrationConstants.XML_ISLATESTVERSION_ELEMENT).getStringValue());
-		assetMetadata.setId(root.element(MigrationConstants.XML_FULLPATH_ELEMENT).getStringValue());
-		assetMetadata.setId(root.element(MigrationConstants.XML_FILENAME_ELEMENT).getStringValue());
+		assetMetadata.setVersion(root.element(MigrationConstants.XML_VERSION_ELEMENT).getStringValue());
+		assetMetadata.setIsMaster(root.element(MigrationConstants.XML_ISMASTER_ELEMENT).getStringValue());
+		assetMetadata.setIsLatestVersion(root.element(MigrationConstants.XML_ISLATESTVERSION_ELEMENT).getStringValue());
+		assetMetadata.setFullPath(root.element(MigrationConstants.XML_FULLPATH_ELEMENT).getStringValue());
+		assetMetadata.setFileName(root.element(MigrationConstants.XML_FILENAME_ELEMENT).getStringValue());
 		
 		logger.debug(" ID :  {} ", root.element(MigrationConstants.XML_ID_ELEMENT).getStringValue());
 		logger.debug(" Version :  {} ", root.element(MigrationConstants.XML_VERSION_ELEMENT).getStringValue());
