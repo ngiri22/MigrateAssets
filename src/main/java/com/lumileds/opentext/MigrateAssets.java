@@ -40,23 +40,10 @@ public class MigrateAssets {
 			assetMetadata = xmlElements.getElements(files[i]);
 				
 			sqlexec.insertMetadata(assetMetadata);
-
-			List<Element> elemList = assetMetadata.getNameFieldList();
-			//fileDoc.getElements(files[3]);
-
-			for (Iterator<Element> elemIterator = elemList.iterator(); elemIterator.hasNext(); ) {
-
-				Element fieldElement = elemIterator.next();
-
-				logger.debug("{} : {} ", 
-						fieldElement.attributeValue(MigrationConstants.XML_NAME_ATTRIBUTE)
-						, fieldElement.getStringValue());
-
-			}
-
-			logger.info("********************END******************");
 			
 		}
+		
+		logger.info("********************END******************");
 
 	}	
 

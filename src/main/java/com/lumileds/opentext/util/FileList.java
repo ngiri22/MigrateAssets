@@ -8,6 +8,7 @@ public class FileList {
 	public File[] getFiles(String folderPath) {
 
 		return xmlFiles(folderPath);
+		
 	}
 
 	private File[] xmlFiles(String directory) {
@@ -19,18 +20,19 @@ public class FileList {
 			@Override
 			public boolean accept(File directoryName, String fileNamePattern) {
 
-				if(fileNamePattern.lastIndexOf('.')>0) {
+				if( fileNamePattern.lastIndexOf('.') > 0 ) {
 
-					// get last index for '.' char
+					//get last index for '.' char
 					int lastIndex = fileNamePattern.lastIndexOf('.');
 
-					// get extension
+					//get extension
 					String str = fileNamePattern.substring(lastIndex);
 
 					// match path name extension
 					if(str.equals(".xml")) {
 						return true;
 					}
+					
 				}
 
 				return false;
