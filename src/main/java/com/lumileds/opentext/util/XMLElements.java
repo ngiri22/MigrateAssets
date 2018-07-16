@@ -12,6 +12,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXParseException;
 
 import com.lumileds.opentext.config.MigrationConstants;
 import com.lumileds.opentext.data.AssetMetadata;
@@ -23,8 +24,28 @@ public class XMLElements {
 
 	public AssetMetadata getElements(File xmlFile) throws DocumentException {
 
-		SAXReader reader = new SAXReader();
-		Document document = reader.read(xmlFile);
+		FilesUtility filesUtility = new FilesUtility();
+		
+		Document document = null;
+		
+		try {
+			SAXReader reader = new SAXReader();
+			
+			document = reader.read(xmlFile);
+			
+		}
+//		catch (SAXParseException saxEx) {
+//			
+//			logger.info("Exception while parsing the xml: {} ", saxEx);
+//		}
+//		
+		catch (DocumentException docEx) {
+			
+			filesUtility.move(xmlFile, MigrationConstants.FILE_ERROR_LOCATION);
+			
+			logger.error("Exception while parsing the xml: {} ", docEx);
+		}
+		
 
 		return fetchElements(document);
 	}
@@ -64,8 +85,11 @@ public class XMLElements {
 					,classificationElement.element(MigrationConstants.XML_LABELPATH_ELEMENT).getStringValue()
 					);
 			
-			logger.debug(" NamePath : {}", classificationElement.element(MigrationConstants.XML_NAMEPATH_ELEMENT).getStringValue() );
-			logger.debug(" LabelPath : {}", classificationElement.element(MigrationConstants.XML_LABELPATH_ELEMENT).getStringValue() );
+			logger.debug(" NamePath : {}", classificationElement.element(
+					MigrationConstants.XML_NAMEPATH_ELEMENT).getStringValue() );
+			
+			logger.debug(" LabelPath : {}", classificationElement.element(
+					MigrationConstants.XML_LABELPATH_ELEMENT).getStringValue() );
 			
 		}
 		

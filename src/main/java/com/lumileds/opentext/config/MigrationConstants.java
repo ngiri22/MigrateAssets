@@ -27,14 +27,9 @@ public class MigrationConstants {
 	public static final String FILE_INPUT_LOCATION = Configurations.getInstance().getProperty("file.input.location");
 	public static final String FILE_PROCESSED_LOCATION = Configurations.getInstance().getProperty("file.processed.location");
 	public static final String FILE_INPUT_BATCH_COUNT = Configurations.getInstance().getProperty("file.input.batch.count");
-
+	public static final String FILE_ERROR_LOCATION = Configurations.getInstance().getProperty("file.error.location");
 	
 	// Constants (not user configurable)
 	public static final String PATH_CONFFILE = "config.properties";
-	
-	
-	
-	
-
 
 }
