@@ -1,20 +1,20 @@
 ##Migrate Assets Utility
+
 This code reads the xml files from the xml folder and gets the needed elements.
-
 Inserts the records into the database.
-
 Moves the processed and errored out files to a different folder
 
 #How to Run
-The main class is MigrateAssets.java
-It needs to input files in the classpath
+
+It needs two input files in the classpath
 - log4j.properties
 - config.properties
 
-Configure the different properties in the above two files.
-file.input.batch.count param tells how many assets should be processed.
+Configure the properties in the above two files.
 
 Call the jar file with following command.
-java -jar MigrateAssets.jar (Make sure the two config files are in the classpath
+- java -jar MigrateAssets.jar (Make sure the two config files are present in the current directory or in the classpath)
 
-Check the Db for records inserted and then the processed folder.
+Check the database for records inserted and then the processed folder.
+
+Logs are generated into file migration.log under the directory called logs/ (this is configurable using log4j)

@@ -1,11 +1,8 @@
 package com.lumileds.opentext;
 
 import java.io.File;
-import java.util.Iterator;
-import java.util.List;
 
 import org.dom4j.DocumentException;
-import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

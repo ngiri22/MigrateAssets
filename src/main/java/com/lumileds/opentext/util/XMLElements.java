@@ -12,7 +12,6 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXParseException;
 
 import com.lumileds.opentext.config.MigrationConstants;
 import com.lumileds.opentext.data.AssetMetadata;
