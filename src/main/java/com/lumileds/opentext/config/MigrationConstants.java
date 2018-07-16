@@ -2,12 +2,13 @@ package com.lumileds.opentext.config;
 
 public class MigrationConstants {
 
+	//DB values
 	public static final String DB_URL = Configurations.getInstance().getProperty("db.url");
 	public static final String DB_DRIVER = Configurations.getInstance().getProperty("db.driver");
 	public static final String DB_USER = Configurations.getInstance().getProperty("db.user");
 	public static final String DB_PASSWORD = Configurations.getInstance().getProperty("db.password");
 	
-	//XML constants	
+	//XML values	
 	public static final String XML_FIELDS_ELEMENT = Configurations.getInstance().getProperty("xml.fields.element");
 	public static final String XML_FIELD_ELEMENT = Configurations.getInstance().getProperty("xml.field.element");
 	public static final String XML_NAME_ATTRIBUTE = Configurations.getInstance().getProperty("xml.name.attribute");
@@ -22,12 +23,13 @@ public class MigrationConstants {
 	public static final String XML_NAMEPATH_ELEMENT = Configurations.getInstance().getProperty("xml.namePath.element");
 	public static final String XML_LABELPATH_ELEMENT = Configurations.getInstance().getProperty("xml.labelPath.element");
 	
+	//File Input values
+	public static final String FILE_INPUT_LOCATION = Configurations.getInstance().getProperty("file.input.location");
+	public static final String FILE_PROCESSED_LOCATION = Configurations.getInstance().getProperty("file.processed.location");
+	public static final String FILE_INPUT_BATCH_COUNT = Configurations.getInstance().getProperty("file.input.batch.count");
+	public static final String FILE_ERROR_LOCATION = Configurations.getInstance().getProperty("file.error.location");
+	
 	// Constants (not user configurable)
 	public static final String PATH_CONFFILE = "config.properties";
-	
-	
-	
-	
-
 
 }

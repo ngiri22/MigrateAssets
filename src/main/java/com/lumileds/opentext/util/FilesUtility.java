@@ -3,11 +3,19 @@ package com.lumileds.opentext.util;
 import java.io.File;
 import java.io.FilenameFilter;
 
-public class FileList {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-	public File[] getFiles(String folderPath) {
+import com.lumileds.opentext.config.MigrationConstants;
 
-		return xmlFiles(folderPath);
+public class FilesUtility {
+	
+	private final Logger logger = LoggerFactory.getLogger(FilesUtility.class);
+
+	public File[] getFilesToProcess() {
+
+		return xmlFiles(MigrationConstants.FILE_INPUT_LOCATION);
+		
 	}
 
 	private File[] xmlFiles(String directory) {
@@ -19,18 +27,19 @@ public class FileList {
 			@Override
 			public boolean accept(File directoryName, String fileNamePattern) {
 
-				if(fileNamePattern.lastIndexOf('.')>0) {
+				if( fileNamePattern.lastIndexOf('.') > 0 ) {
 
-					// get last index for '.' char
+					//get last index for '.' char
 					int lastIndex = fileNamePattern.lastIndexOf('.');
 
-					// get extension
+					//get extension
 					String str = fileNamePattern.substring(lastIndex);
 
 					// match path name extension
 					if(str.equals(".xml")) {
 						return true;
 					}
+					
 				}
 
 				return false;
@@ -42,6 +51,16 @@ public class FileList {
 
 		return xmlFileList;
 
+	}
+
+	public void move(File file, String dirToMove) {
+		
+		logger.info(" Processing completed, file is moved to {}",
+				dirToMove + "\\" + file.getName());
+		
+		file.renameTo(new File (
+				dirToMove + "\\" + file.getName()));
+		
 	}
 
 }

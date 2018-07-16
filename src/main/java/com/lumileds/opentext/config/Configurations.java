@@ -42,7 +42,7 @@ public final class Configurations {
 	    }
 	    return result;
 	}
-
+	
 	/** Override the clone method to ensure the "unique instance" requeriment of this class */
 	public Object clone() throws CloneNotSupportedException {
 	    throw new CloneNotSupportedException();
