@@ -1,4 +1,9 @@
-package com.lumileds.opentext.data;
+package com.nttdata.lumileds.opentext.migration.data;
+
+/**
+ * Entity data pojo class
+ * with getters and setters.
+ */
 
 import java.util.HashMap;
 import java.util.List;

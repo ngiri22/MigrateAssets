@@ -1,4 +1,11 @@
-package com.lumileds.opentext.config;
+package com.nttdata.lumileds.opentext.migration.config;
+
+/****
+ * Class to manage constants read from config file.
+ * 
+ * @author 165898
+ *
+ */
 
 public class MigrationConstants {
 

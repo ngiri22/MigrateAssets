@@ -1,4 +1,10 @@
-package com.lumileds.opentext.util;
+package com.nttdata.lumileds.opentext.migration.util;
+
+/****
+ * Class for SQL related operations
+ * Gets the pojo class and inserts the records
+ *  into the database into each of the tables
+ */
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -14,8 +20,8 @@ import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.lumileds.opentext.config.MigrationConstants;
-import com.lumileds.opentext.data.AssetMetadata;
+import com.nttdata.lumileds.opentext.migration.config.MigrationConstants;
+import com.nttdata.lumileds.opentext.migration.data.AssetMetadata;
 
 public class SQLExecutor {
 	

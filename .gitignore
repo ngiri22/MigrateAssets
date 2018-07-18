@@ -4,3 +4,5 @@ bin/
 .settings
 logs/
 libs/
+.gradle/
+build/

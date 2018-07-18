@@ -1,4 +1,11 @@
-package com.lumileds.opentext.util;
+package com.nttdata.lumileds.opentext.migration.util;
+
+/**
+ * Class to parse the xml and return the
+ * xml elements in a structured pojo class
+ * that can be easily used to insert into the 
+ *  database
+ */
 
 import java.io.File;
 import java.util.ArrayList;
@@ -13,8 +20,8 @@ import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.lumileds.opentext.config.MigrationConstants;
-import com.lumileds.opentext.data.AssetMetadata;
+import com.nttdata.lumileds.opentext.migration.config.MigrationConstants;
+import com.nttdata.lumileds.opentext.migration.data.AssetMetadata;
 
 public class XMLElements {
 	
@@ -33,11 +40,6 @@ public class XMLElements {
 			document = reader.read(xmlFile);
 			
 		}
-//		catch (SAXParseException saxEx) {
-//			
-//			logger.info("Exception while parsing the xml: {} ", saxEx);
-//		}
-//		
 		catch (DocumentException docEx) {
 			
 			filesUtility.move(xmlFile, MigrationConstants.FILE_ERROR_LOCATION);

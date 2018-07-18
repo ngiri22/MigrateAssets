@@ -1,4 +1,9 @@
-package com.lumileds.opentext.config;
+package com.nttdata.lumileds.opentext.migration.config;
+
+/*****
+ * Config class to read parameters from an external config file
+ * 
+ */
 
 import java.util.Properties;
 

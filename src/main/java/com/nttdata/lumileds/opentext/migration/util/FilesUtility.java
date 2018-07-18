@@ -1,4 +1,10 @@
-package com.lumileds.opentext.util;
+package com.nttdata.lumileds.opentext.migration.util;
+
+/***
+ * Files utility to handle file related operations
+ * Reads the input directory and returns all the xml files
+ * Moves the files to another directory after processing.
+ */
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -6,7 +12,7 @@ import java.io.FilenameFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.lumileds.opentext.config.MigrationConstants;
+import com.nttdata.lumileds.opentext.migration.config.MigrationConstants;
 
 public class FilesUtility {
 	
