@@ -66,22 +66,22 @@ public class SQLExecutor {
 			List<Element> nameFieldElementList = assetMetadata.getNameFieldList();
 			
 			insertAssetMetadata(nameFieldElementList, assetMetadata.getId(),conn);
+			
+			return true;
 
 		}
 
-		catch (SQLException ex) {
+		catch (SQLException sqlEx) {
 			
-			ex.printStackTrace();
-			logger.info("Exception: {} ", ex.getMessage());
+			logger.error("SQLException: {} ", sqlEx );
 			
 		} finally {
 			try {
 				if (conn != null && !conn.isClosed()) {
 					conn.close();
 				}
-			} catch (SQLException ex) {
-				ex.printStackTrace();
-				logger.info("Exception: {} ", ex.getMessage());
+			} catch (SQLException sqlEx) {
+				logger.error("SQLException: {} ", sqlEx);
 			}
 		}
 

@@ -29,7 +29,7 @@ public class MigrateAssets {
 
 		FilesUtility filesUtility = new FilesUtility();
 
-		
+
 		//Get the files to be processed.
 		File[] files = filesUtility.getFilesToProcess();
 
@@ -43,7 +43,7 @@ public class MigrateAssets {
 		for (int i=0; i < files.length; i = i+1) {
 
 			// Process only max batch size for every run.
-			
+
 			if ( i < Integer.valueOf(MigrationConstants.FILE_INPUT_BATCH_COUNT) ) {
 
 				logger.info("File being processed: {}", files[i].getName());
@@ -54,10 +54,11 @@ public class MigrateAssets {
 					assetMetadata = xmlElements.getElements(files[i]);
 
 					//Insert the pojo into the database.
-					sqlexec.insertMetadata(assetMetadata);
+					if(sqlexec.insertMetadata(assetMetadata)) {
 
-					//Move the files to processed directory.
-					filesUtility.move(files[i], MigrationConstants.FILE_PROCESSED_LOCATION);
+						//Move the files to processed directory, if metadata inserted successfully..
+						filesUtility.move(files[i], MigrationConstants.FILE_PROCESSED_LOCATION);
+					}
 				}
 				catch (NullPointerException nullEx) {
 
