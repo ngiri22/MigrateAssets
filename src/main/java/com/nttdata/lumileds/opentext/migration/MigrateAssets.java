@@ -54,19 +54,21 @@ public class MigrateAssets {
 					assetMetadata = xmlElements.getElements(files[i]);
 
 					//Insert the pojo into the database.
-					if(sqlexec.insertMetadata(assetMetadata)) {
+					if(sqlexec.insertMetadata(assetMetadata )) {
 
 						//Move the files to processed directory, if metadata inserted successfully..
 						filesUtility.move(files[i], MigrationConstants.FILE_PROCESSED_LOCATION);
 					}
 				}
-				catch (NullPointerException nullEx) {
+				catch (Exception ex) {
 
-					logger.error("Null pointer exception {}: ", nullEx);
+					logger.error("Null pointer exception {}: ", ex);
 
 				}
 			}
 		}
+		
+		SQLExecutor.closeConnection();
 
 		logger.info("********************END******************");
 

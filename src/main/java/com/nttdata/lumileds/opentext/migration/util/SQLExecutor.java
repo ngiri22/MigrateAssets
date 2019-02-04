@@ -24,88 +24,81 @@ import com.nttdata.lumileds.opentext.migration.config.MigrationConstants;
 import com.nttdata.lumileds.opentext.migration.data.AssetMetadata;
 
 public class SQLExecutor {
-	
-	private final Logger logger = LoggerFactory.getLogger(SQLExecutor.class);
-	
-	private Connection getConnection() throws SQLException {
 
-		Connection conn = null;
+	private static final Logger logger = LoggerFactory.getLogger(SQLExecutor.class);
 
-		String dbURL = MigrationConstants.DB_URL;
-		String user = MigrationConstants.DB_USER;
-		String pass = MigrationConstants.DB_PASSWORD;
+	private static Connection conn = null;
 
-		conn = DriverManager.getConnection(dbURL, user, pass);
-		if (conn != null) {
-			DatabaseMetaData dm = (DatabaseMetaData) conn.getMetaData();
-			logger.debug("Driver name : {}", dm.getDriverName());
-			logger.debug("Driver version : {}", dm.getDriverVersion());
-			logger.debug("Product name : {}", dm.getDatabaseProductName());
-			logger.debug("Product version : {}", dm.getDatabaseProductVersion());
-		}
+	public SQLExecutor() {
 
-		return conn;
+			String dbURL = MigrationConstants.DB_URL;
+			String driver = MigrationConstants.DB_DRIVER;
+			String user = MigrationConstants.DB_USER;
+			String pass = MigrationConstants.DB_PASSWORD;
 
+			try {
+				Class.forName(driver).newInstance();
+
+				conn = DriverManager.getConnection(dbURL, user, pass);
+				if (null != conn) {
+					DatabaseMetaData dm = (DatabaseMetaData) conn.getMetaData();
+					logger.debug("Driver name : {}", dm.getDriverName());
+					logger.debug("Driver version : {}", dm.getDriverVersion());
+					logger.debug("Product name : {}", dm.getDatabaseProductName());
+					logger.debug("Product version : {}", dm.getDatabaseProductVersion());
+				}
+
+			}
+			catch (Exception ex) {
+				logger.error("Exception: {} ", ex);
+			}
+		
 	}
 
 	public boolean insertMetadata(AssetMetadata assetMetadata) {
 
-		Connection conn = null;
-
 		try {
-		
-			conn = getConnection();
-			
+
 			insertAssetMaster(assetMetadata,conn);
-			
+
 			HashMap<String,String> namePathLabelPathMap = assetMetadata.getNameLabelPathMap();
-			
+
 			insertAssetTaxonomy(namePathLabelPathMap, assetMetadata.getId(),conn);
-			
-			
+
 			List<Element> nameFieldElementList = assetMetadata.getNameFieldList();
-			
+
 			insertAssetMetadata(nameFieldElementList, assetMetadata.getId(),conn);
-			
+
 			return true;
 
 		}
 
-		catch (SQLException sqlEx) {
-			
-			logger.error("SQLException: {} ", sqlEx );
-			
-		} finally {
-			try {
-				if (conn != null && !conn.isClosed()) {
-					conn.close();
-				}
-			} catch (SQLException sqlEx) {
-				logger.error("SQLException: {} ", sqlEx);
-			}
-		}
+		catch (Exception ex) {
 
+			logger.error("Exception while inserting into database: {} ", ex );
+
+		} 
 		return false;
 	}
 
 	private void insertAssetMetadata(List<Element> nameFieldElementList,
 			String id, Connection conn) throws SQLException {
-		
-		String assetMetadataInsert = "INSERT INTO ASSET_METADATA "
+
+		String assetMetadataInsert = "INSERT INTO LUMILEDS_MIGRATION_PAL_ASSET_METADATA "
 				+ "(ID, NAME, FIELD) VALUES "
 				+ "(?,?,?)";
-		
+
 		PreparedStatement assetMetadataInsertStatement = 
 				conn.prepareStatement(assetMetadataInsert);
-		
+
 		for (Iterator<Element> elemIterator = nameFieldElementList.iterator(); elemIterator.hasNext(); ) {
 
 			Element fieldElement = elemIterator.next();
-			
+
 			logger.debug("{} : {} ", 
 					fieldElement.attributeValue(MigrationConstants.XML_NAME_ATTRIBUTE)
 					, fieldElement.getStringValue());
-			
+
 			assetMetadataInsertStatement.setString(1, id);
 			assetMetadataInsertStatement.setString(2, fieldElement.attributeValue(MigrationConstants.XML_NAME_ATTRIBUTE));
 			assetMetadataInsertStatement.setString(3,  fieldElement.getStringValue());
@@ -113,59 +106,69 @@ public class SQLExecutor {
 			assetMetadataInsertStatement.clearParameters();			
 
 		}
-				
+
 	}
 
 	private void insertAssetTaxonomy(HashMap<String, String> namePathLabelPathMap,
 			String id, Connection conn) throws SQLException {
-		
-		String assetTaxonomyInsert = "INSERT INTO ASSET_TAXONOMY "
+
+		String assetTaxonomyInsert = "INSERT INTO LUMILEDS_MIGRATION_PAL_ASSET_TAXONOMY "
 				+ "(ID, NAMEPATH, LABELPATH) VALUES "
 				+ "(?,?,?)";
-		
+
 		PreparedStatement assetTaxonomyInsertStatement = 
 				conn.prepareStatement(assetTaxonomyInsert);
-		
+
 		for (Map.Entry<String, String> entry : namePathLabelPathMap.entrySet()) {
-			
+
 			logger.debug("NamePath: {}", entry.getKey());
 			logger.debug("LabelPath: {}", entry.getValue());
-			
+
 			assetTaxonomyInsertStatement.setString(1, id);
 			assetTaxonomyInsertStatement.setString(2, entry.getKey());
 			assetTaxonomyInsertStatement.setString(3, entry.getValue());
 			assetTaxonomyInsertStatement.executeUpdate();
 			assetTaxonomyInsertStatement.clearParameters();
-			
+
 		}
-		
+
 	}
 
 
 	private void insertAssetMaster (AssetMetadata assetMetadata, Connection conn) throws SQLException {
 
-		String assetMasterInsert = "INSERT INTO ASSET_MASTER "
+		String assetMasterInsert = "INSERT INTO LUMILEDS_MIGRATION_PAL_ASSET_MASTER "
 				+ "(ID, VERSION, ISMASTER, ISLATESTVERSION,"
 				+ "FULLPATH,FILENAME) VALUES"
 				+ "(?,?,?,?,?,?)";
 
 		PreparedStatement assetMasterInsertStatement = 
 				conn.prepareStatement(assetMasterInsert);
-		
+
 		logger.debug("Version: {} ", assetMetadata.getVersion());
 		logger.debug("isMaster: {} ", assetMetadata.getIsMaster());
 		logger.debug("isLatestVersion: {} ", assetMetadata.getIsLatestVersion());
 		logger.debug("fullPath: {} ", assetMetadata.getFullPath());
 		logger.debug("fileName: {} ", assetMetadata.getFileName());
-		
+
 		assetMasterInsertStatement.setString(1, assetMetadata.getId());
 		assetMasterInsertStatement.setString(2, assetMetadata.getVersion());
 		assetMasterInsertStatement.setString(3, assetMetadata.getIsMaster());
 		assetMasterInsertStatement.setString(4, assetMetadata.getIsLatestVersion());
 		assetMasterInsertStatement.setString(5, assetMetadata.getFullPath());
 		assetMasterInsertStatement.setString(6, assetMetadata.getFileName());
-		
+
 		assetMasterInsertStatement.executeUpdate();		
-		
+
+	}
+
+	public static void closeConnection() {
+		try {
+			if (conn != null && !conn.isClosed()) {
+				conn.close();
+			}
+		} catch (SQLException sqlEx) {
+			logger.error("SQLException: {} ", sqlEx);
+		}
 	}
 }
