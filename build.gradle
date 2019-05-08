@@ -17,7 +17,7 @@ repositories {
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-mainClassName = 'com.nttdata.lumileds.opentext.migration.MigrateAssets'
+mainClassName = 'com.nttdata.lumileds.opentext.migration.LMMFileRename'
 
 
 dependencies {
@@ -36,7 +36,7 @@ jar {
   manifest {
     attributes(
       'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
-      'Main-Class': 'com.nttdata.lumileds.opentext.migration.MigrateAssets'
+      'Main-Class': 'com.nttdata.lumileds.opentext.migration.LMMFileRename'
       )
   }
   

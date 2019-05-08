@@ -15,12 +15,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.sql.ResultSet;
 
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.nttdata.lumileds.opentext.migration.config.MigrationConstants;
+import com.nttdata.lumileds.opentext.migration.data.AssetInfo;
 import com.nttdata.lumileds.opentext.migration.data.AssetMetadata;
 
 public class SQLExecutor {
@@ -161,6 +163,77 @@ public class SQLExecutor {
 		assetMasterInsertStatement.executeUpdate();		
 
 	}
+	
+	public ResultSet getFileNameAndLocation() {
+		
+		String fileNameAndLocation = 
+				"select top " + MigrationConstants.RENAME_BATCH_COUNT +
+				" a.uoi_id,a.name,b.master_obj_id,b.master_obj_name_loc "
+				+ " from uois a, uois b where " 
+				+ " a.uoi_id=b.uoi_id and "
+				+ " a.name<>b.master_obj_name and "
+				+ " a.name like '%.%' and " 
+				+ " b.master_obj_name like '[0-9]%'";
+		PreparedStatement fileNameAndLocationStatement;
+		try {
+		
+			fileNameAndLocationStatement =
+				conn.prepareStatement(fileNameAndLocation);
+				
+			return fileNameAndLocationStatement.executeQuery();
+		}
+		catch (SQLException sqlEx) {
+			logger.error("SQLException while fetching object details: {} ", sqlEx);
+		}				
+				
+		return null;
+	}
+	
+	public void updateObjNameLocation(AssetInfo assetInfo) {
+		
+		String updateUOISObjNameLocation = "UPDATE UOIS SET "
+				+ " MASTER_OBJ_NAME = ? , "
+				+ " MASTER_OBJ_NAME_LOC = ? "
+				+ " WHERE MASTER_OBJ_ID = ? AND "
+				+ " UOI_ID = ? ";
+		
+		String updateObjStacksNameLocation = "UPDATE OBJECT_STACKS SET "
+				+ " OBJECT_NAME = ? , "
+				+ " OBJECT_NAME_LOCATION = ? "
+				+ " WHERE OBJECT_ID = ? ";
+		
+		try {
+			
+			PreparedStatement updateUOISStatement = 
+					conn.prepareStatement(updateUOISObjNameLocation);
+			
+			updateUOISStatement.setString(1, assetInfo.getFileName());
+			updateUOISStatement.setString(2,  assetInfo.getFixedObjLocation());
+			updateUOISStatement.setString(3,  assetInfo.getMasterObjID());
+			updateUOISStatement.setString(4, assetInfo.getUoiID());
+			
+			updateUOISStatement.executeUpdate();
+			
+			updateUOISStatement.close();
+			
+			
+			PreparedStatement updateObjStacksStatement = 
+					conn.prepareStatement(updateObjStacksNameLocation);
+			
+			updateObjStacksStatement.setString(1, assetInfo.getFileName());
+			updateObjStacksStatement.setString(2,  assetInfo.getFixedObjLocation());
+			updateObjStacksStatement.setString(3,  assetInfo.getMasterObjID());
+			
+			updateObjStacksStatement.executeUpdate();
+			
+			updateObjStacksStatement.close();
+			
+			
+		} catch (SQLException sqlEx) {
+			logger.error("SQLException while updating object details: {} ", sqlEx);
+		}
+		
+	}
 
 	public static void closeConnection() {
 		try {
@@ -168,7 +241,8 @@ public class SQLExecutor {
 				conn.close();
 			}
 		} catch (SQLException sqlEx) {
-			logger.error("SQLException: {} ", sqlEx);
+			logger.error("SQLException while closing the connection: {} ", sqlEx);
 		}
 	}
+
 }

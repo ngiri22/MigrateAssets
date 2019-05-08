@@ -8,20 +8,22 @@ package com.nttdata.lumileds.opentext.migration.util;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.nttdata.lumileds.opentext.migration.config.MigrationConstants;
+import com.nttdata.lumileds.opentext.migration.data.AssetInfo;
 
 public class FilesUtility {
-	
+
 	private final Logger logger = LoggerFactory.getLogger(FilesUtility.class);
 
 	public File[] getFilesToProcess() {
 
 		return xmlFiles(MigrationConstants.FILE_INPUT_LOCATION);
-		
+
 	}
 
 	private File[] xmlFiles(String directory) {
@@ -45,7 +47,7 @@ public class FilesUtility {
 					if(str.equals(".xml")) {
 						return true;
 					}
-					
+
 				}
 
 				return false;
@@ -60,13 +62,41 @@ public class FilesUtility {
 	}
 
 	public void move(File file, String dirToMove) {
-		
+
 		logger.info(" Processing completed, file is moved to {}",
 				dirToMove + "\\" + file.getName());
-		
+
 		file.renameTo(new File (
 				dirToMove + "\\" + file.getName()));
-		
+
+	}
+
+	public void renameFiles(AssetInfo assetInfo) {
+
+		logger.info("Old File Location: {}", 
+				MigrationConstants.MM_REPOSITORY +
+				MigrationConstants.BACK_SLASH + 
+				assetInfo.getCurrentObjLocation());
+
+		logger.info("New File Location: {}", 
+				MigrationConstants.MM_REPOSITORY +
+				MigrationConstants.BACK_SLASH +
+				assetInfo.getFixedObjLocation());
+
+		File fileName = new File(
+				MigrationConstants.MM_REPOSITORY + 
+				MigrationConstants.BACK_SLASH +
+				assetInfo.getCurrentObjLocation()
+				);
+
+		fileName.renameTo(
+				new File(
+						MigrationConstants.MM_REPOSITORY +
+						MigrationConstants.BACK_SLASH +
+						assetInfo.getFixedObjLocation()
+						)
+				);
+
 	}
 
 }

@@ -38,5 +38,13 @@ public class MigrationConstants {
 	
 	// Constants (not user configurable)
 	public static final String PATH_CONFFILE = "config.properties";
+	
+	// Slash
+	public static final String BACK_SLASH = "\\";
+	public static final String MM_REPOSITORY = Configurations.getInstance().getProperty("file.rename.repository.location");
+	public static final String DOT_FOR_ARRAY_SPLIT = "\\.";
+	public static final String DOT = ".";
+	public static final String UNDER_SCORE = "_";
+	public static final String RENAME_BATCH_COUNT = Configurations.getInstance().getProperty("file.rename.batch.count");
 
 }
