@@ -12,10 +12,27 @@ public class AssetInfo {
 	
 	private String uoiID;
 	private String masterObjID;
+	private String screenObjID;
 	private String fileName;
 	private String currentObjLocation;
 	private String fixedObjLocation;
+	private String masterObjName;
+	private String screenObjName;
 	
+	/**
+	 * @return the masteObjName
+	 */
+	
+	public String getMasterObjName() {
+		return masterObjName;
+	}
+	
+	/**
+	 * @param masterObjName the masterObjName to set
+	 */
+	public void setMasterObjName(String masterObjName) {
+		this.masterObjName = masterObjName;
+	}
 	
 	/**
 	 * @return the uoiID
@@ -43,6 +60,20 @@ public class AssetInfo {
 		this.masterObjID = masterObjID;
 	}
 	
+	/**
+	 * @return the screenObjID
+	 */
+	public String getScreenObjID() {
+		return screenObjID;
+	}
+
+	/**
+	 * @param screenObjID the screenObjID to set
+	 */
+	public void setScreenObjID(String screenObjID) {
+		this.screenObjID = screenObjID;
+	}
+
 	/**
 	 * @return the fileName
 	 */
@@ -78,6 +109,20 @@ public class AssetInfo {
 	 */
 	public void setFixedObjLocation(String fixedObjLocation) {
 		this.fixedObjLocation = fixedObjLocation;
+	}
+
+	/**
+	 * @return the screenObjName
+	 */
+	public String getScreenObjName() {
+		return screenObjName;
+	}
+
+	/**
+	 * @param screenObjName the screenObjName to set
+	 */
+	public void setScreenObjName(String screenObjName) {
+		this.screenObjName = screenObjName;
 	}
 	
 

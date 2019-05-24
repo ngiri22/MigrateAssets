@@ -33,28 +33,28 @@ public class SQLExecutor {
 
 	public SQLExecutor() {
 
-			String dbURL = MigrationConstants.DB_URL;
-			String driver = MigrationConstants.DB_DRIVER;
-			String user = MigrationConstants.DB_USER;
-			String pass = MigrationConstants.DB_PASSWORD;
+		String dbURL = MigrationConstants.DB_URL;
+		String driver = MigrationConstants.DB_DRIVER;
+		String user = MigrationConstants.DB_USER;
+		String pass = MigrationConstants.DB_PASSWORD;
 
-			try {
-				Class.forName(driver).newInstance();
+		try {
+			Class.forName(driver).newInstance();
 
-				conn = DriverManager.getConnection(dbURL, user, pass);
-				if (null != conn) {
-					DatabaseMetaData dm = (DatabaseMetaData) conn.getMetaData();
-					logger.debug("Driver name : {}", dm.getDriverName());
-					logger.debug("Driver version : {}", dm.getDriverVersion());
-					logger.debug("Product name : {}", dm.getDatabaseProductName());
-					logger.debug("Product version : {}", dm.getDatabaseProductVersion());
-				}
-
+			conn = DriverManager.getConnection(dbURL, user, pass);
+			if (null != conn) {
+				DatabaseMetaData dm = (DatabaseMetaData) conn.getMetaData();
+				logger.debug("Driver name : {}", dm.getDriverName());
+				logger.debug("Driver version : {}", dm.getDriverVersion());
+				logger.debug("Product name : {}", dm.getDatabaseProductName());
+				logger.debug("Product version : {}", dm.getDatabaseProductVersion());
 			}
-			catch (Exception ex) {
-				logger.error("Exception: {} ", ex);
-			}
-		
+
+		}
+		catch (Exception ex) {
+			logger.error("Exception: {} ", ex);
+		}
+
 	}
 
 	public boolean insertMetadata(AssetMetadata assetMetadata) {
@@ -163,76 +163,130 @@ public class SQLExecutor {
 		assetMasterInsertStatement.executeUpdate();		
 
 	}
-	
+
 	public ResultSet getFileNameAndLocation() {
-		
+
 		String fileNameAndLocation = 
-				"select top " + MigrationConstants.RENAME_BATCH_COUNT +
-				" a.uoi_id,a.name,b.master_obj_id,b.master_obj_name_loc "
+				"select top " + MigrationConstants.RENAME_BATCH_COUNT 
+				+ " a.uoi_id,a.name,b.master_obj_id,b.master_obj_name_loc, "
+				+ " b.master_obj_name "
 				+ " from uois a, uois b where " 
 				+ " a.uoi_id=b.uoi_id and "
-				+ " a.name<>b.master_obj_name and "
-				+ " a.name like '%.%' and " 
-				+ " b.master_obj_name like '[0-9]%'";
+				+ " a.name<>b.master_obj_name";
 		PreparedStatement fileNameAndLocationStatement;
 		try {
-		
+
 			fileNameAndLocationStatement =
-				conn.prepareStatement(fileNameAndLocation);
-				
+					conn.prepareStatement(fileNameAndLocation);
+
 			return fileNameAndLocationStatement.executeQuery();
 		}
 		catch (SQLException sqlEx) {
 			logger.error("SQLException while fetching object details: {} ", sqlEx);
 		}				
-				
+
+		return null;
+	}
+
+	public ResultSet getScreenNameAndLocation() {
+
+		String screenNameAndLocation = 
+				"select top " + MigrationConstants.RENAME_BATCH_COUNT + 
+				" a.name, b.object_id, b.OBJECT_NAME_LOCATION " + 
+				" from " + 
+				" uois a , object_stacks b where " + 
+				" a.SCREEN_RES_OBJ_ID = b.object_id and " + 
+				" substring (a.name,0,5) <> substring(b.object_name,0,5) and " + 
+				" b.OBJECT_NAME like '%-S.JPG' and " + 
+				" b.content_kind='PREVIEW' and " + 
+				" a.name like '%.%'";
+
+		PreparedStatement screenNameAndLocationStatement;
+		try {
+
+			screenNameAndLocationStatement =
+					conn.prepareStatement(screenNameAndLocation);
+
+			return screenNameAndLocationStatement.executeQuery();
+		}
+		catch (SQLException sqlEx) {
+			logger.error("SQLException while fetching screen name details: {} ", sqlEx);
+		}				
+
 		return null;
 	}
 	
+	public void updateScreenObjNameLocation(AssetInfo assetInfo) {
+
+		String updateObjStacksNameLocation = "UPDATE OBJECT_STACKS SET "
+				+ " OBJECT_NAME = ? , "
+				+ " OBJECT_NAME_LOCATION = ? "
+				+ " WHERE OBJECT_ID = ? ";
+
+		try {
+
+			PreparedStatement updateObjStacksStatement = 
+					conn.prepareStatement(updateObjStacksNameLocation);
+
+			updateObjStacksStatement.setString(1, assetInfo.getScreenObjName());
+			updateObjStacksStatement.setString(2,  assetInfo.getFixedObjLocation());
+			updateObjStacksStatement.setString(3,  assetInfo.getScreenObjID());
+
+			updateObjStacksStatement.executeUpdate();
+
+			updateObjStacksStatement.close();
+
+
+		} catch (SQLException sqlEx) {
+			logger.error("SQLException while updating object details: {} ", sqlEx);
+		}
+
+	}
+
 	public void updateObjNameLocation(AssetInfo assetInfo) {
-		
+
 		String updateUOISObjNameLocation = "UPDATE UOIS SET "
 				+ " MASTER_OBJ_NAME = ? , "
 				+ " MASTER_OBJ_NAME_LOC = ? "
 				+ " WHERE MASTER_OBJ_ID = ? AND "
 				+ " UOI_ID = ? ";
-		
+
 		String updateObjStacksNameLocation = "UPDATE OBJECT_STACKS SET "
 				+ " OBJECT_NAME = ? , "
 				+ " OBJECT_NAME_LOCATION = ? "
 				+ " WHERE OBJECT_ID = ? ";
-		
+
 		try {
-			
+
 			PreparedStatement updateUOISStatement = 
 					conn.prepareStatement(updateUOISObjNameLocation);
-			
+
 			updateUOISStatement.setString(1, assetInfo.getFileName());
 			updateUOISStatement.setString(2,  assetInfo.getFixedObjLocation());
 			updateUOISStatement.setString(3,  assetInfo.getMasterObjID());
 			updateUOISStatement.setString(4, assetInfo.getUoiID());
-			
+
 			updateUOISStatement.executeUpdate();
-			
+
 			updateUOISStatement.close();
-			
-			
+
+
 			PreparedStatement updateObjStacksStatement = 
 					conn.prepareStatement(updateObjStacksNameLocation);
-			
+
 			updateObjStacksStatement.setString(1, assetInfo.getFileName());
 			updateObjStacksStatement.setString(2,  assetInfo.getFixedObjLocation());
 			updateObjStacksStatement.setString(3,  assetInfo.getMasterObjID());
-			
+
 			updateObjStacksStatement.executeUpdate();
-			
+
 			updateObjStacksStatement.close();
-			
-			
+
+
 		} catch (SQLException sqlEx) {
 			logger.error("SQLException while updating object details: {} ", sqlEx);
 		}
-		
+
 	}
 
 	public static void closeConnection() {

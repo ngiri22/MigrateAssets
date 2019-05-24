@@ -18,15 +18,15 @@ public class FileRenameUtil {
 	public List<AssetInfo> processDBResult(ResultSet lmmFileNameAndLocation) {
 
 		List<AssetInfo> assetInfoList = new ArrayList<AssetInfo>();
-		
+
 		String relativeDirPath;
 		int lastIndexOfSlash;
 		String[] fileParts;
 
 		try {
-			
+
 			while (lmmFileNameAndLocation.next()) {
-				
+
 				AssetInfo assetInfo = new AssetInfo();
 
 				assetInfo.setUoiID(lmmFileNameAndLocation.getString(1));
@@ -45,23 +45,30 @@ public class FileRenameUtil {
 
 				logger.info("Old Object Location: {}", assetInfo.getCurrentObjLocation());
 
+				assetInfo.setMasterObjName(lmmFileNameAndLocation.getString(5));
+
+				logger.info("Master Object Name: {}", assetInfo.getMasterObjName());
+
 				fileParts = assetInfo.getFileName().split(MigrationConstants.DOT_FOR_ARRAY_SPLIT);
+
+				//fileParts = assetInfo.getMasterObjName().split(MigrationConstants.DOT_FOR_ARRAY_SPLIT);
 
 				lastIndexOfSlash = assetInfo.getCurrentObjLocation().
 						lastIndexOf(MigrationConstants.BACK_SLASH);
-				
+
 				logger.debug("Last Index of Back Slash: {}", lastIndexOfSlash);
 
 				relativeDirPath = assetInfo.getCurrentObjLocation().
 						substring(0,lastIndexOfSlash);
 
 				logger.debug("Relative Path of the Directory: {}", relativeDirPath);
-				
+
 				if (fileParts.length > 1) {
 
 					assetInfo.setFixedObjLocation( 
 							relativeDirPath + MigrationConstants.BACK_SLASH +
-							fileParts[0] + MigrationConstants.UNDER_SCORE + 
+							fileParts[0] + MigrationConstants.UNDER_SCORE +
+							//assetInfo.getFileName() + MigrationConstants.UNDER_SCORE +
 							assetInfo.getMasterObjID() + MigrationConstants.DOT
 							+ fileParts[1]
 							);
@@ -72,10 +79,79 @@ public class FileRenameUtil {
 					assetInfo.setFixedObjLocation( 
 							relativeDirPath + MigrationConstants.BACK_SLASH +
 							fileParts[0] + MigrationConstants.UNDER_SCORE + 
+							//assetInfo.getFileName() + MigrationConstants.UNDER_SCORE +
 							assetInfo.getMasterObjID()
 							);
 
 				}
+
+
+				logger.info("New Object Location: {}", assetInfo.getFixedObjLocation());			
+
+				assetInfoList.add(assetInfo);
+
+			}
+		} catch (SQLException sqlEx) {
+			logger.error("SQL Exception while processing DB Results: {}",
+					sqlEx);
+		}
+
+		return assetInfoList;
+
+	}
+
+	public List<AssetInfo> processScreenNameResult(ResultSet lmmScreenNameAndLocation) {
+
+		List<AssetInfo> assetInfoList = new ArrayList<AssetInfo>();
+
+		String relativeDirPath;
+		int lastIndexOfSlash;
+		String[] fileParts;
+
+		try {
+
+			while (lmmScreenNameAndLocation.next()) {
+
+				AssetInfo assetInfo = new AssetInfo();
+
+				assetInfo.setFileName(lmmScreenNameAndLocation.getString(1));
+
+				logger.info("File Name: {}", assetInfo.getFileName() );
+
+				assetInfo.setScreenObjID(lmmScreenNameAndLocation.getString(2));
+
+				logger.info("Screen Object ID: {}", assetInfo.getScreenObjID()) ;
+
+				assetInfo.setCurrentObjLocation(lmmScreenNameAndLocation.getString(3));
+
+				logger.info("Old Object Location: {}", assetInfo.getCurrentObjLocation());
+
+				fileParts = assetInfo.getFileName().split(MigrationConstants.DOT_FOR_ARRAY_SPLIT);
+				
+				assetInfo.setScreenObjName(fileParts[0] + "-S.JPG");
+				
+				logger.info("Corrected Screen Object Name: {}", assetInfo.getScreenObjName());
+
+				//fileParts = assetInfo.getMasterObjName().split(MigrationConstants.DOT_FOR_ARRAY_SPLIT);
+
+				lastIndexOfSlash = assetInfo.getCurrentObjLocation().
+						lastIndexOf(MigrationConstants.BACK_SLASH);
+
+				logger.debug("Last Index of Back Slash: {}", lastIndexOfSlash);
+
+				relativeDirPath = assetInfo.getCurrentObjLocation().
+						substring(0,lastIndexOfSlash);
+
+				logger.debug("Relative Path of the Directory: {}", relativeDirPath);
+
+				assetInfo.setFixedObjLocation( 
+						relativeDirPath + MigrationConstants.BACK_SLASH +
+						fileParts[0] + "-S" +
+						MigrationConstants.UNDER_SCORE +
+						//assetInfo.getFileName() + MigrationConstants.UNDER_SCORE +
+						assetInfo.getScreenObjID() + MigrationConstants.DOT
+						+ "JPG"
+						);
 
 
 				logger.info("New Object Location: {}", assetInfo.getFixedObjLocation());			
