@@ -13,11 +13,13 @@ public class AssetInfo {
 	private String uoiID;
 	private String masterObjID;
 	private String screenObjID;
+	private String thumbnailObjID;
 	private String fileName;
 	private String currentObjLocation;
 	private String fixedObjLocation;
 	private String masterObjName;
 	private String screenObjName;
+	private String thumbnailObjName;
 	
 	/**
 	 * @return the masteObjName
@@ -123,6 +125,34 @@ public class AssetInfo {
 	 */
 	public void setScreenObjName(String screenObjName) {
 		this.screenObjName = screenObjName;
+	}
+
+	/**
+	 * @return the thumbnailObjName
+	 */
+	public String getThumbnailObjName() {
+		return thumbnailObjName;
+	}
+
+	/**
+	 * @param thumbnailObjName the thumbnailObjName to set
+	 */
+	public void setThumbnailObjName(String thumbnailObjName) {
+		this.thumbnailObjName = thumbnailObjName;
+	}
+
+	/**
+	 * @return the thumbnailObjID
+	 */
+	public String getThumbnailObjID() {
+		return thumbnailObjID;
+	}
+
+	/**
+	 * @param thumbnailObjID the thumbnailObjID to set
+	 */
+	public void setThumbnailObjID(String thumbnailObjID) {
+		this.thumbnailObjID = thumbnailObjID;
 	}
 	
 

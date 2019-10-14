@@ -172,7 +172,8 @@ public class SQLExecutor {
 				+ " b.master_obj_name "
 				+ " from uois a, uois b where " 
 				+ " a.uoi_id=b.uoi_id and "
-				+ " a.name<>b.master_obj_name";
+				+ " a.name<>b.master_obj_name and "
+				+ " a.name like '%.%'";
 		PreparedStatement fileNameAndLocationStatement;
 		try {
 
@@ -216,6 +217,34 @@ public class SQLExecutor {
 		return null;
 	}
 	
+	public ResultSet getThumbnailAndLocation() {
+
+		String thumbnailAndLocation = 
+				"select top " + MigrationConstants.RENAME_BATCH_COUNT + 
+				" a.name, b.object_id, b.OBJECT_NAME_LOCATION " + 
+				" from " + 
+				" uois a , object_stacks b where " + 
+				" a.THUMB_NAIL_OBJ_ID = b.object_id and " + 
+				" substring (a.name,0,5) <> substring(b.object_name,0,5) and " + 
+				" b.OBJECT_NAME like '%-S-T.JPG' and " + 
+				" b.content_kind='THUMBNAIL' and " + 
+				" a.name like '%.%'";
+
+		PreparedStatement thumbnailAndLocationStatement;
+		try {
+
+			thumbnailAndLocationStatement =
+					conn.prepareStatement(thumbnailAndLocation);
+
+			return thumbnailAndLocationStatement.executeQuery();
+		}
+		catch (SQLException sqlEx) {
+			logger.error("SQLException while fetching screen name details: {} ", sqlEx);
+		}				
+
+		return null;
+	}
+	
 	public void updateScreenObjNameLocation(AssetInfo assetInfo) {
 
 		String updateObjStacksNameLocation = "UPDATE OBJECT_STACKS SET "
@@ -235,6 +264,33 @@ public class SQLExecutor {
 			updateObjStacksStatement.executeUpdate();
 
 			updateObjStacksStatement.close();
+
+
+		} catch (SQLException sqlEx) {
+			logger.error("SQLException while updating object details: {} ", sqlEx);
+		}
+
+	}
+	
+	public void updateThumbnailObjNameLocation(AssetInfo assetInfo) {
+
+		String updateThumbObjStacksNameLocation = "UPDATE OBJECT_STACKS SET "
+				+ " OBJECT_NAME = ? , "
+				+ " OBJECT_NAME_LOCATION = ? "
+				+ " WHERE OBJECT_ID = ? ";
+
+		try {
+
+			PreparedStatement updateThumbObjStacksStatement = 
+					conn.prepareStatement(updateThumbObjStacksNameLocation);
+
+			updateThumbObjStacksStatement.setString(1, assetInfo.getThumbnailObjName());
+			updateThumbObjStacksStatement.setString(2, assetInfo.getFixedObjLocation());
+			updateThumbObjStacksStatement.setString(3, assetInfo.getThumbnailObjID());
+
+			updateThumbObjStacksStatement.executeUpdate();
+
+			updateThumbObjStacksStatement.close();
 
 
 		} catch (SQLException sqlEx) {

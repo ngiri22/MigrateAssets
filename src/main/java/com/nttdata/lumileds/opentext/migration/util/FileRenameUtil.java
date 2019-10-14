@@ -167,5 +167,74 @@ public class FileRenameUtil {
 		return assetInfoList;
 
 	}
+	
+	public List<AssetInfo> processThumbnailNameResult(ResultSet lmmThumbnailNameAndLocation) {
+
+		List<AssetInfo> assetInfoList = new ArrayList<AssetInfo>();
+
+		String relativeDirPath;
+		int lastIndexOfSlash;
+		String[] fileParts;
+
+		try {
+
+			while (lmmThumbnailNameAndLocation.next()) {
+
+				AssetInfo assetInfo = new AssetInfo();
+
+				assetInfo.setFileName(lmmThumbnailNameAndLocation.getString(1));
+
+				logger.info("File Name: {}", assetInfo.getFileName() );
+
+				assetInfo.setThumbnailObjID(lmmThumbnailNameAndLocation.getString(2));
+
+				logger.info("Thumbnail Object ID: {}", assetInfo.getThumbnailObjID()) ;
+
+				assetInfo.setCurrentObjLocation(lmmThumbnailNameAndLocation.getString(3));
+
+				logger.info("Old Object Location: {}", assetInfo.getCurrentObjLocation());
+
+				fileParts = assetInfo.getFileName().split(MigrationConstants.DOT_FOR_ARRAY_SPLIT);
+				
+				assetInfo.setThumbnailObjName(fileParts[0] + "-S-T.JPG");
+				
+				logger.info("Corrected Thumbnail Object Name: {}", assetInfo.getThumbnailObjName());
+
+				//fileParts = assetInfo.getMasterObjName().split(MigrationConstants.DOT_FOR_ARRAY_SPLIT);
+
+				lastIndexOfSlash = assetInfo.getCurrentObjLocation().
+						lastIndexOf(MigrationConstants.BACK_SLASH);
+
+				logger.debug("Last Index of Back Slash: {}", lastIndexOfSlash);
+
+				relativeDirPath = assetInfo.getCurrentObjLocation().
+						substring(0,lastIndexOfSlash);
+
+				logger.debug("Relative Path of the Directory: {}", relativeDirPath);
+
+				assetInfo.setFixedObjLocation( 
+						relativeDirPath + MigrationConstants.BACK_SLASH +
+						fileParts[0] + "-S-T" +
+						MigrationConstants.UNDER_SCORE +
+						//assetInfo.getFileName() + MigrationConstants.UNDER_SCORE +
+						assetInfo.getThumbnailObjID() + 
+						MigrationConstants.DOT +
+						"JPG"
+						);
+
+
+				logger.info("New Object Location: {}", assetInfo.getFixedObjLocation());			
+
+				assetInfoList.add(assetInfo);
+
+			}
+		} catch (SQLException sqlEx) {
+			logger.error("SQL Exception while processing DB Results: {}",
+					sqlEx);
+		}
+
+		return assetInfoList;
+
+	}
 
 }
